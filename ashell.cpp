@@ -38,6 +38,10 @@ void prompt(const char* wd) {
 	write(STDOUT_FILENO, result.c_str(), result.length());
 }
 
+void cd (string dir) {
+    DIR *pDir = opendir(dir);
+}
+ 
 int main() {
 	char *wd = getcwd(NULL,0); //working directory
 	
