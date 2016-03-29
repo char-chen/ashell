@@ -58,7 +58,7 @@ vector<string> split(string str, char delimiter) {
 int main() {
 	char *wd = getcwd(NULL,0); //working directory
 	
-	while(1) {			
+	while(true) {			
         prompt(wd); //output the promt
         string input = "";
 
@@ -69,24 +69,43 @@ int main() {
                 break;
             else
                 input += c;
+            
+            switch (c){
+				case '\n':
+					goto exit_loop; // jump out of the loop
+					break;
+				case 37: //left
+					break;
+				case 38: //up
+					break;
+				case 39: //right
+					break;
+				case 40: //down
+					break; 
+				default:
+					input += c;
+					break;
+			}
         } //read in input line
 		
-		if (input.length() == 0)
+		exit_loop:;
+
+		if (input.length()==0)
 			continue;
 
-        vector<string> sep = split(myCSV, ',');
+        vector<string> args = split(input, ' ');
         
-		if (input == "exit") {
+		if (args[0] == "exit") {
 			exit(0);
         }
-        else if (input == 
-		else
-		{
+        else if (args[0] == "cd") {
+            cd(args[1]);
+        } 
+		else {
 			write(STDOUT_FILENO, "Failed to execute ", 18);
 			write(STDOUT_FILENO, input.c_str(), input.length());
 			write(STDOUT_FILENO, "\n", 1);
 		} //default situation
-
 	} //keep working until exit
 	
 	return 0; //return 0;
