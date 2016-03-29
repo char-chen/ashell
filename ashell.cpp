@@ -1,19 +1,19 @@
 #include <unistd.h>
 #include <stdio.h>
-#include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
+using namespace std;
 
-char* printPath(const char* wd)
+void prompt(const char* wd)
 {
-	
-	char *result = (char*)malloc(sizeof(wd));
-	
+    char *result = new char[strlen(wd)];
+    
 	if (strlen(wd)>16)
 	{
 		strncpy(result, "/.../", 5);
-		char temp[sizeof(wd)];
+		char temp[strlen(wd)];
 		int count1 = strlen(wd)-1;
 		int count2 = 0;
 		char c = wd[count1];
@@ -34,25 +34,31 @@ char* printPath(const char* wd)
 	}
 	else
 		strcpy(result, wd);
-		
-	strcat(result, "% ");
-	
-	return result;
+    
+    strcat(result, "% ");
+    
+	write(STDOUT_FILENO, result, strlen(result));
+    
+    delete(result);
 }
 
 int main()
 {
-	char *wd; //current working directory
-	wd = getcwd(NULL,0);
-	char* prompt = printPath(wd);
+	char *wd = getcwd(NULL,0); //working directory
 	
 	while(1)
 	{			
-		char readin[10];
-		
-		write(STDOUT_FILENO, prompt, (int)strlen(prompt));
-		
-		read(STDIN_FILENO, readin, strlen(prompt));
+        prompt(wd);
+        char *input;
+        
+        while(1) //get full input
+        {
+            input
+            
+            
+        }
+        
+        sleep(10000);
 	}
 	
 	return 0;
