@@ -41,7 +41,7 @@ void prompt(const char* wd) {
 int main() {
 	char *wd = getcwd(NULL,0); //working directory
 	
-	while(1) {			
+	while(true) {			
         prompt(wd); //output the promt
         string input = "";
 
@@ -49,12 +49,25 @@ int main() {
 
         while(read(STDIN_FILENO, &c, 1) != -1) {
 
-            if (c == '\n')
-                break;
-            else
-                input += c;
+            switch (c){
+				case '\n':
+					goto exit_loop; // jump out of the loop
+					break;
+				case 37: //left
+					break;
+				case 38: //up
+					break;
+				case 39: //right
+					break;
+				case 40: //down
+					break; 
+				default:
+					input += c;
+					break;
+			}
         } //read in input line
-		
+		exit_loop:;
+
 		if (input.length()==0)
 			continue;
 
