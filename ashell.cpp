@@ -4,7 +4,9 @@
 #include <string.h>
 #include <string>
 #include <iostream>
-
+#include <dirent.h>
+#include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -39,9 +41,20 @@ void prompt(const char* wd) {
 } //output the prompt
 
 void cd (string dir) {
-    DIR *pDir = opendir(dir);
+    DIR *pDir = opendir(dir.c_str());
 }
  
+vector<string> split(string str, char delimiter) {
+    vector<string> internal;
+    stringstream ss(str); // Turn the string into a stream.
+    string tok;
+    
+    while(getline(ss, tok, delimiter))
+        internal.push_back(tok);
+  
+    return internal;
+}
+
 int main() {
 	char *wd = getcwd(NULL,0); //working directory
 	
@@ -52,24 +65,27 @@ int main() {
         char c = 0;
 
         while(read(STDIN_FILENO, &c, 1) != -1) {
-
             if (c == '\n')
                 break;
             else
                 input += c;
         } //read in input line
 		
-		if (input.length()==0)
+		if (input.length() == 0)
 			continue;
 
-		if (input == "exit")
+        vector<string> sep = split(myCSV, ',');
+        
+		if (input == "exit") {
 			exit(0);
+        }
+        else if (input == 
 		else
 		{
 			write(STDOUT_FILENO, "Failed to execute ", 18);
 			write(STDOUT_FILENO, input.c_str(), input.length());
 			write(STDOUT_FILENO, "\n", 1);
-		}//default situation
+		} //default situation
 
 	} //keep working until exit
 	
