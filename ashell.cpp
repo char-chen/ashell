@@ -65,10 +65,6 @@ int main() {
         char c = 0;
 
         while(read(STDIN_FILENO, &c, 1) != -1) {
-            if (c == '\n')
-                break;
-            else
-                input += c;
             
             switch (c){
 				case '\n':
