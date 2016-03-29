@@ -3,16 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <iostream>
+
 
 using namespace std;
 
 void prompt(const char* wd)
 {
-    char *result = new char[strlen(wd)];
+    string result = ""; //allocate space for wd
     
 	if (strlen(wd)>16)
 	{
-		strncpy(result, "/.../", 5);
+        result.assign("/.../", 5);
+        
 		char temp[strlen(wd)];
 		int count1 = strlen(wd)-1;
 		int count2 = 0;
@@ -30,16 +33,15 @@ void prompt(const char* wd)
 			temp[i] = temp[count2-1-i];
 			temp[count2-1-i] = c;
 		}
-		strcat(result, temp);
+		result += temp;
 	}
 	else
-		strcpy(result, wd);
+        result.assign(wd);
     
-    strcat(result, "% ");
+    result += "% ";
     
-	write(STDOUT_FILENO, result, strlen(result));
+	write(STDOUT_FILENO, result.c_str(), result.length());
     
-    delete(result);
 }
 
 int main()
@@ -49,16 +51,21 @@ int main()
 	while(1)
 	{			
         prompt(wd);
-        char *input;
+        string input = "";
         
         while(1) //get full input
         {
-            input
-            
-            
+            char c = 0;
+            scanf("%c",&c);
+            if (c == '\n') {
+                break;
+            }
+            else
+            {
+                input += c;
+            }
         }
-        
-        sleep(10000);
+        printf("%s\n", input.c_str());
 	}
 	
 	return 0;
