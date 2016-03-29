@@ -8,12 +8,10 @@
 
 using namespace std;
 
-void prompt(const char* wd)
-{
+void prompt(const char* wd) {
     string result = ""; //allocate space for wd
     
-	if (strlen(wd)>16)
-	{
+	if (strlen(wd)>16) {
         result.assign("/.../", 5);
         
 		char temp[strlen(wd)];
@@ -21,14 +19,12 @@ void prompt(const char* wd)
 		int count2 = 0;
 		char c = wd[count1];
 		
-		while(c!='/')
-		{
+		while(c!='/') {
 			temp[count2++] = c;
 			c = wd[--count1];
 		}
 		
-		for (int i=0; i<(count2/2);i++)
-		{
+		for (int i=0; i<(count2/2);i++) {
 			c = temp[i];
 			temp[i] = temp[count2-1-i];
 			temp[count2-1-i] = c;
@@ -39,35 +35,25 @@ void prompt(const char* wd)
         result.assign(wd);
     
     result += "% ";
-    
 	write(STDOUT_FILENO, result.c_str(), result.length());
-    
 }
 
-int main()
-{
+int main() {
 	char *wd = getcwd(NULL,0); //working directory
 	
-	while(1)
-	{			
+	while(1) {			
         prompt(wd);
         string input = "";
         
-        while(1) //get full input
-        {
+        while(1) {
             char c = 0;
             scanf("%c",&c);
-            if (c == '\n') {
+            if (c == '\n')
                 break;
-            }
             else
-            {
                 input += c;
-            }
         }
-        printf("%s\n", input.c_str());
 	}
 	
 	return 0;
 }
-
