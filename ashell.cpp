@@ -1,11 +1,17 @@
 #include "line.cpp"
 
 
-void cd(string dir) {
-    if (dir == "")
-        chdir(getenv("HOME"));
-    else
-        chdir(dir.c_str());
+void cd(string dir)
+{
+    if (dir == "") {
+        if (chdir(getenv("HOME")); == -1)
+            write(STDOUT_FILENO, "Error changing directory.\n", 26);
+    }
+    
+    else {
+        if (chdir(dir.c_str()) == -1)
+            write(STDOUT_FILENO, "Error changing directory.\n", 26);
+    }
 }
 
 void ls(string dir) {
