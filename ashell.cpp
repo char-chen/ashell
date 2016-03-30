@@ -1,11 +1,9 @@
 #include "line.cpp"
 
-
-<<<<<<< HEAD
 void cd(string dir)
 {
     if (dir == "") {
-        if (chdir(getenv("HOME")); == -1)
+        if (chdir(getenv("HOME")) == -1)
             write(STDOUT_FILENO, "Error changing directory.\n", 26);
     }
     
@@ -30,27 +28,30 @@ void ff(string filename, string directory)
 string* split(string str)
 {
     string *result = new string[3];
-    int s = str.find(" ");
-    result[0] = str.substr(0, s);
-    
-    int first = 0;
-    int end = 0;
     
     for (int n=0; n < 3; n++) {
-        for (int i=0; i < str.length();i++) {
+        
+        int first = 0;
+        int end = str.length();
+        
+        for (int i=0; i < str.length(); i++) {
             if (str[i] != 0x20) {
                 first = i;
                 break;
             }
         } //get the first start
-        for (int i=first; i < str.length();i++) {
+        
+        for (int i=first+1; i < str.length(); i++) {
             if (str[i] == 0x20) {
                 end = i;
                 break;
             }
         }
-        result[n] = str.substr(first, end);
-        str = str.substr(end, str.length());
+        result[n] = str.substr(first, end - first);
+        str = str.substr(end, str.length() - end);
+        
+        if (str.length()==0)
+            break;
     }
 
     return result;
@@ -90,7 +91,7 @@ int main() {
             pwd();
         } else {
 			write(STDOUT_FILENO, "Failed to execute ", 18);
-			write(STDOUT_FILENO, input.c_str(), input.length());
+			write(STDOUT_FILENO, args[0].c_str(), args[0].length());
 			write(STDOUT_FILENO, "\n", 1);
 		} //default situation
         
