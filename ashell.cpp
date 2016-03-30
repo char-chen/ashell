@@ -16,25 +16,44 @@ void pwd() {
 
 }
 
-void ff(string filename, string directory) {
+void ff(string filename, string directory)
+{
     
 }
  
-vector<string> split(string str, char delimiter) {
-    vector<string> internal;
-    stringstream ss(str); // Turn the string into a stream.
-    string tok;
+string* split(string str)
+{
+    string *result = new string[3];
+    int s = str.find(" ");
+    result[0] = str.substr(0, s);
     
-    while(getline(ss, tok, delimiter))
-        internal.push_back(tok);
-  
-    return internal;
+    int first = 0;
+    int end = 0;
+    
+    for (int n=0; n < 3; n++) {
+        for (int i=0; i < str.length();i++) {
+            if (str[i] != 0x20) {
+                first = i;
+                break;
+            }
+        } //get the first start
+        for (int i=first; i < str.length();i++) {
+            if (str[i] == 0x20) {
+                end = i;
+                break;
+            }
+        }
+        result[n] = str.substr(first, end);
+        str = str.substr(end, str.length());
+    }
+
+    return result;
 }
 
 int main() {
 	char *wd = getcwd(NULL, 0); //working directory
     
-    //initial
+    //initial history system
     history *h = new history;
     h->count = 0;
     
@@ -47,12 +66,11 @@ int main() {
         prompt(wd); //output the promt
 
         string input = mygetline(h);
+        string *args = split(input);
         
-		/*if (input.length()==0)
+		if (args[0].length()==0)
 			continue;
-
-        //vector<string> args = split(input, ' ');
-         
+        
 		if (args[0] == "exit") {
 			exit(0);
         } else if (args[0] == "cd") {
@@ -68,7 +86,8 @@ int main() {
 			write(STDOUT_FILENO, "Failed to execute ", 18);
 			write(STDOUT_FILENO, input.c_str(), input.length());
 			write(STDOUT_FILENO, "\n", 1);
-		} //default situation*/
+		} //default situation
+        
 	} //keep working until exit
 	
 	return 0; //return 0;

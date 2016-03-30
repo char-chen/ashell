@@ -9,12 +9,10 @@ struct history
 
 void add(history *h, string command)
 {
-    
     for (int i = 9; i > 0; i--) {
         h->commands[i] = h->commands[i-1];
     }
     h->commands[0] = command;
-    
 }
 
 string mygetline(history *h)
@@ -115,29 +113,3 @@ string mygetline(history *h)
 }
 //
 
-
-
-/*****
-int main() {
-
-    string m = "";
-
-    history *h = new history;
-    h->count = 0;
-    
-    for (int i=0; i<10; i++) {
-        h->commands[i] = "";
-    }
-    
-    
-    while(1) //get full input
-    {
-        write(STDOUT_FILENO, "xxx: ", 5);
-        m = mygetline(h);
-        cout << "      " << m << endl;
-    }
-	
-    
-	return 0; //return 0;
-}
- ****/
