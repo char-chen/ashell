@@ -43,12 +43,14 @@ void prompt(const char* wd) {
 void cd(string dir) {
     if (dir == "")
         chdir(getenv("HOME"));
+    else if (chdir(dir.c_str()) == 
+    else if (access(dir.c_str(), F_OK) == -1)
+        write(STDOUT_FILENO, "Error changing directory.\n", 26);
     else
         chdir(dir.c_str());
 }
 
 void ls(string dir) {
-
 }
 
 void pwd() {
@@ -73,13 +75,13 @@ vector<string> split(string str, char delimiter) {
 int main() {
 	char *wd = getcwd(NULL, 0); //working directory
 	
-	while(true) {			
-        prompt(wd); //output the promt
+	while (true) {			
+        prompt(wd); //output the prompt
         string input = "";
         char c = 0;
 
-        while(read(STDIN_FILENO, &c, 1) != -1) {
-            switch (c){
+        while (read(STDIN_FILENO, &c, 1) != -1) {
+            switch (c) {
 				case '\n':
 					goto exit_loop; // jump out of the loop
 					break;
