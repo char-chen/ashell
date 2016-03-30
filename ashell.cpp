@@ -40,11 +40,14 @@ void prompt(const char* wd) {
 	write(STDOUT_FILENO, result.c_str(), result.length()); //output the prompt
 } //output the prompt
 
-void cd (string dir) {
-    chdir(dir.c_str());
+void cd(string dir) {
+    if (dir == "")
+        chdir(getenv("HOME"));
+    else
+        chdir(dir.c_str());
 }
 
-void ls (string dir) {
+void ls(string dir) {
 
 }
 
@@ -109,7 +112,7 @@ int main() {
         } else if (args[0] == "ls") {
             ls(args[1]);
         } else if (args[0] == "ff") {
-            ff(args[1]);
+            ff(args[1], args[2]);
         } else if (args[0] == "pwd") {
             pwd();
         } else {
