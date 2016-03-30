@@ -55,15 +55,7 @@ int main()
         
         while(1) //get full input
         {
-            char c = 0;
-            scanf("%c",&c);
-            if (c == '\n') {
-                break;
-            }
-            else
-            {
-                input += c;
-            }
+            
         }
         printf("%s\n", input.c_str());
 	}
