@@ -78,7 +78,13 @@ int main() {
 	while (true) {			
         prompt(wd); //output the prompt
         string input = "";
-        char c = 0;
+        
+        while(1) //get full input
+        {
+            
+        }
+        printf("%s\n", input.c_str());
+	}
 
         while (read(STDIN_FILENO, &c, 1) != -1) {
             switch (c) {
