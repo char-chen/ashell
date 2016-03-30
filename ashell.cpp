@@ -1,6 +1,7 @@
 #include "line.cpp"
 
 
+<<<<<<< HEAD
 void cd(string dir)
 {
     if (dir == "") {
@@ -15,7 +16,6 @@ void cd(string dir)
 }
 
 void ls(string dir) {
-
 }
 
 void pwd() {
