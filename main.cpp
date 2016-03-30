@@ -1,5 +1,6 @@
 #include "ashell.h"
 
+//mygetline
 struct history
 {
     int count;
@@ -8,15 +9,12 @@ struct history
 
 void add(history *h, string command)
 {
-    if (h->count < 10) {
-        h->commands[h->count++] = command;
+    
+    for (int i = 9; i > 0; i--) {
+        h->commands[i] = h->commands[i-1];
     }
-    else {/Users/will/Desktop/ashell/ashell.cpp
-        for (int i = 1; i < 10; i++) {
-            h->commands[i] = h->commands[i-1];
-        }
-        h->commands[0] = command;
-    }
+    h->commands[0] = command;
+    
 }
 
 string mygetline(history *h)
@@ -27,7 +25,7 @@ string mygetline(history *h)
 
 	SetNonCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
 
-    int count = 0;
+    int count = -1;
     
 	while(read(STDIN_FILENO, &RXChar, 1) != -1) {
 		
@@ -43,10 +41,9 @@ string mygetline(history *h)
 			{
 				case 'A': //UP
                     count++;
-                    //write(STDOUT_FILENO, h->commands[count].c_str(), h->commands[count].length());
-                    
                     if (h->commands[count].length() == 0) {
                         write(STDOUT_FILENO, "\a", 1);
+                        break;
                     }
                     else
                     {
@@ -54,14 +51,39 @@ string mygetline(history *h)
                             write(STDOUT_FILENO, "\b \b", 3);
                             line = line.substr(0,line.length()-1);
                         }
+                        
                         line = h->commands[count];
-                        write(STDOUT_FILENO, h->commands[count].c_str(), h->commands[count].length());
+                        write(STDOUT_FILENO, line.c_str(), line.length());
+                        
                     }
 					break;
 				case 'B': //DOWN
+                    if (count == -1)
+                    {
+                        write(STDOUT_FILENO, "\a", 1);
+                        break;
+                    }
+                    if (count == 0)
+                    {
+                        while (line.length()>0) {
+                            write(STDOUT_FILENO, "\b \b", 3);
+                            line = line.substr(0,line.length()-1);
+                        }
+                        count--;
+                        break;
+                    }
+                    else
+                        count--;
+                        
+                    while (line.length()>0) {
+                        write(STDOUT_FILENO, "\b \b", 3);
+                        line = line.substr(0,line.length()-1);
+                    }
+                        
+                    line = h->commands[count];
+                    write(STDOUT_FILENO, line.c_str(), line.length());
 					break;
 				case 'C': //RIGHT
-                    
 					break;
 				case 'D': //LEFT
                     
@@ -91,7 +113,7 @@ string mygetline(history *h)
     
 	return line.c_str();	
 }
-
+//
 
 
 
@@ -112,6 +134,7 @@ int main() {
     {
         write(STDOUT_FILENO, "xxx: ", 5);
         m = mygetline(h);
+        cout << "      " << m << endl;
     }
 	
     
