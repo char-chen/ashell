@@ -11,7 +11,7 @@ void add(history *h, string command)
     if (h->count < 10) {
         h->commands[h->count++] = command;
     }
-    else {
+    else {/Users/will/Desktop/ashell/ashell.cpp
         for (int i = 1; i < 10; i++) {
             h->commands[i] = h->commands[i-1];
         }
