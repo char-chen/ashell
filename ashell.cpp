@@ -13,10 +13,13 @@ void cd(string dir)
     }
 }
 
-void ls(string dir) {
+void ls(string dirjksajkdlajskdjaldkjalsd
+) {
+    
 }
 
-void pwd() {
+void pwd()
+{
 
 }
 

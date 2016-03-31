@@ -49,7 +49,6 @@ void ResetCanonicalMode(int fd, struct termios *savedattributes){
 
 void SetNonCanonicalMode(int fd, struct termios *savedattributes){
     struct termios TermAttributes;
-    char *name;
     
     // Make sure stdin is a terminal. 
     if(!isatty(fd)){
