@@ -3,33 +3,38 @@
 void cd(string dir)
 {
     if (dir == "") {
-        if (chdir(getenv("HOME")) == -1)
+        if (chdir(getenv("HOME")) == -1) {
             write(STDOUT_FILENO, "Error changing directory.\n", 26);
-    }
-    
-    else {
-        if (chdir(dir.c_str()) == -1)
+        }
+    } else {
+        if (chdir(dir.c_str()) == -1) {
             write(STDOUT_FILENO, "Error changing directory.\n", 26);
+        }
     }
 }
 
-void ls(string dirjksajkdlajskdjaldkjalsd
-) {
-    
+void ls(string dir) {
+    DIR *mydir;
+    mydir = opendir(dir.c_str());
+    struct dirent *myfile;
+    struct stat mystat;
+
+    char buf[512];
+    while((myfile = readdir(mydir)) != NULL)
+    {
+        sprintf(buf, "%s/%s", dir.c_str(), myfile->d_name);
+        stat(buf, &mystat);
+        printf("%zu",mystat.st_size);
+        printf(" %s\n", myfile->d_name);
+    }
+    closedir(mydir);
 }
 
-void pwd()
-{
-
-}
-
-void ff(string filename, string directory)
-{
+void ff(string filename, string directory) {
     
 }
  
-string* split(string str)
-{
+string* split(string str) {
     string *result = new string[3];
     
     for (int n=0; n < 3; n++) {
@@ -91,13 +96,13 @@ int main() {
         } else if (args[0] == "ff") {
             ff(args[1], args[2]);
         } else if (args[0] == "pwd") {
-            pwd();
+            write(STDOUT_FILENO, wd, strlen(wd));
+			write(STDOUT_FILENO, "\n", 1);
         } else {
 			write(STDOUT_FILENO, "Failed to execute ", 18);
 			write(STDOUT_FILENO, args[0].c_str(), args[0].length());
 			write(STDOUT_FILENO, "\n", 1);
 		} //default situation
-        
 	} //keep working until exit
 	
 	return 0; //return 0;
