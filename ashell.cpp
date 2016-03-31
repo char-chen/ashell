@@ -1,33 +1,47 @@
 #include "line.cpp"
 
-void cd(string dir)
-{
+void cd(string dir) {
     if (dir == "") {
-        if (chdir(getenv("HOME")) == -1) {
+        if (chdir(getenv("HOME"))) {
             write(STDOUT_FILENO, "Error changing directory.\n", 26);
         }
-    } else {
-        if (chdir(dir.c_str()) == -1) {
-            write(STDOUT_FILENO, "Error changing directory.\n", 26);
-        }
+    } else if (chdir(dir.c_str())) {
+        write(STDOUT_FILENO, "Error changing directory.\n", 26);
     }
 }
 
 void ls(string dir) {
-    DIR *mydir;
-    mydir = opendir(dir.c_str());
     struct dirent *myfile;
-    struct stat mystat;
-
-    char buf[512];
-    while((myfile = readdir(mydir)) != NULL)
-    {
-        sprintf(buf, "%s/%s", dir.c_str(), myfile->d_name);
-        stat(buf, &mystat);
-        printf("%zu",mystat.st_size);
-        printf(" %s\n", myfile->d_name);
+    struct stat fileStat;
+    DIR *mydir;
+    if (dir != "")
+        mydir = opendir(dir.c_str());
+    else
+        mydir = opendir(".");
+    
+    if (mydir) { 
+        string buf;
+        while ((myfile = readdir(mydir))) {
+            stat(buf.c_str(), &fileStat);
+            write(STDOUT_FILENO, (S_ISDIR(fileStat.st_mode)) ? "d" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IRUSR) ? "r" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IWUSR) ? "w" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IXUSR) ? "x" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IRGRP) ? "r" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IWGRP) ? "w" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IXGRP) ? "x" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IROTH) ? "r" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IWOTH) ? "w" : "-", 1);
+            write(STDOUT_FILENO, (fileStat.st_mode & S_IXOTH) ? "x" : "-", 1);
+            write(STDOUT_FILENO, " ", 1);
+            write(STDOUT_FILENO, myfile->d_name, strlen(myfile->d_name));
+		    write(STDOUT_FILENO, "\n", 1);
+        }
+        closedir(mydir);
+    } else {
+        write(STDOUT_FILENO, ("Failed to open directory \"" + dir).c_str(), 25 + dir.length());
+		write(STDOUT_FILENO, "\"\n", 2);
     }
-    closedir(mydir);
 }
 
 void ff(string filename, string directory) {
@@ -37,7 +51,7 @@ void ff(string filename, string directory) {
 string* split(string str) {
     string *result = new string[3];
     
-    for (int n=0; n < 3; n++) {
+    for (int n = 0; n < 3; n++) {
         
         int first = 0;
         int end = str.length();
@@ -58,7 +72,7 @@ string* split(string str) {
         result[n] = str.substr(first, end - first);
         str = str.substr(end, str.length() - end);
         
-        if (str.length()==0)
+        if (str.length() == 0)
             break;
     }
 
@@ -75,7 +89,6 @@ int main() {
     for (int i=0; i<10; i++) {
         h->commands[i] = "";
     }
-    ///
     
 	while(true) {
         prompt(wd); //output the promt
@@ -104,6 +117,5 @@ int main() {
 			write(STDOUT_FILENO, "\n", 1);
 		} //default situation
 	} //keep working until exit
-	
-	return 0; //return 0;
+	return 0;
 }

@@ -1,3 +1,5 @@
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,19 +17,19 @@ using namespace std;
 void prompt(const char* wd) {
     string result = "";
     
-    if (strlen(wd)>16) {
+    if (strlen(wd) > 16) {
         result.assign("/.../", 5);
         char temp[strlen(wd)];
         int count1 = strlen(wd)-1;
         int count2 = 0;
         char c = wd[count1];
         
-        while(c!='/') {
+        while (c != '/') {
             temp[count2++] = c;
             c = wd[--count1];
         } //check last /
         
-        for (int i=0; i<(count2/2);i++) {
+        for (int i = 0; i < count2 / 2; i++) {
             c = temp[i];
             temp[i] = temp[count2-1-i];
             temp[count2-1-i] = c;
@@ -38,7 +40,7 @@ void prompt(const char* wd) {
     else //if length < 16
         result.assign(wd);
     
-    result += "% "; 
+    result += "% ";
     write(STDOUT_FILENO, result.c_str(), result.length()); //output the prompt
 } //output the prompt
 
@@ -49,7 +51,6 @@ void ResetCanonicalMode(int fd, struct termios *savedattributes){
 
 void SetNonCanonicalMode(int fd, struct termios *savedattributes){
     struct termios TermAttributes;
-    char *name;
     
     // Make sure stdin is a terminal. 
     if(!isatty(fd)){
@@ -67,5 +68,3 @@ void SetNonCanonicalMode(int fd, struct termios *savedattributes){
     TermAttributes.c_cc[VTIME] = 0;
     tcsetattr(fd, TCSAFLUSH, &TermAttributes);
 }
-
-

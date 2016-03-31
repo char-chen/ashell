@@ -111,5 +111,3 @@ string mygetline(history *h)
     
 	return line.c_str();	
 }
-//
-
