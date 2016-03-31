@@ -1,12 +1,19 @@
-#include "line.cpp"
+#include "line.h"
+#include "ashell.h"
 
-void cd(string dir) {
+#include <iostream>
+
+
+void cd(string dir)
+{
     if (dir == "") {
-        if (chdir(getenv("HOME"))) {
+        if (chdir(getenv("HOME")) == -1) {
             write(STDOUT_FILENO, "Error changing directory.\n", 26);
         }
-    } else if (chdir(dir.c_str())) {
-        write(STDOUT_FILENO, "Error changing directory.\n", 26);
+    } else {
+        if (chdir(dir.c_str()) == -1) {
+            write(STDOUT_FILENO, "Error changing directory.\n", 26);
+        }
     }
 }
 
@@ -19,7 +26,7 @@ void ls(string dir) {
     else
         mydir = opendir(".");
     
-    if (mydir) { 
+    if (mydir) {
         string buf;
         while ((myfile = readdir(mydir))) {
             stat(buf.c_str(), &fileStat);
@@ -35,87 +42,62 @@ void ls(string dir) {
             write(STDOUT_FILENO, (fileStat.st_mode & S_IXOTH) ? "x" : "-", 1);
             write(STDOUT_FILENO, " ", 1);
             write(STDOUT_FILENO, myfile->d_name, strlen(myfile->d_name));
-		    write(STDOUT_FILENO, "\n", 1);
+            write(STDOUT_FILENO, "\n", 1);
         }
         closedir(mydir);
     } else {
         write(STDOUT_FILENO, ("Failed to open directory \"" + dir).c_str(), 25 + dir.length());
-		write(STDOUT_FILENO, "\"\n", 2);
+        write(STDOUT_FILENO, "\"\n", 2);
     }
 }
 
-void ff(string filename, string directory) {
+void ff(string filename, string directory)
+{
     
 }
- 
-string* split(string str) {
-    string *result = new string[3];
+
+void execBuildIn(char* command, char **args)
+{
+    cout << "try to exec build-in" << endl;
+}
+
+
+
+
+
+int main()
+{
+    char *wd = getcwd(NULL, 0); //working directory
+    history *h = new history(); //init history struct
     
-    for (int n = 0; n < 3; n++) {
+    while(true) {
+        int status;
+        printPrompt(wd); //output the promt
         
-        int first = 0;
-        int end = str.length();
-        
-        for (int i=0; i < str.length(); i++) {
-            if (str[i] != 0x20) {
-                first = i;
-                break;
-            }
-        } //get the first start
-        
-        for (int i=first+1; i < str.length(); i++) {
-            if (str[i] == 0x20) {
-                end = i;
-                break;
+        string input = mygetline(h); //read and store commands
+        char **args = getCommand(input);
+
+        if (isBuildIn(args[0])) {
+            execBuildIn(args[0], args);
+        } else {
+            status = fork();
+            
+            if (status != 0) {
+                //Parent code
+                waitpid(-1, &status, 0);
+            } else {
+                //Child code
+                if (execv(args[0], args) == -1) {
+                    write(STDOUT_FILENO, "Failed to execute ", 18);
+                    write(STDOUT_FILENO, args[0], strlen(args[0]));
+                    write(STDOUT_FILENO, "\n", 1);
+                }
+                
             }
         }
-        result[n] = str.substr(first, end - first);
-        str = str.substr(end, str.length() - end);
         
-        if (str.length() == 0)
-            break;
-    }
-
-    return result;
-}
-
-int main() {
-	char *wd = getcwd(NULL, 0); //working directory
-    
-    //initial history system
-    history *h = new history;
-    h->count = 0;
-    
-    for (int i=0; i<10; i++) {
-        h->commands[i] = "";
+        delete[](args);
     }
     
-	while(true) {
-        prompt(wd); //output the promt
-
-        string input = mygetline(h);
-        string *args = split(input);
-        
-		if (args[0].length()==0)
-			continue;
-        
-		if (args[0] == "exit") {
-			exit(0);
-        } else if (args[0] == "cd") {
-            cd(args[1]);
-            wd = getcwd(NULL, 0);
-        } else if (args[0] == "ls") {
-            ls(args[1]);
-        } else if (args[0] == "ff") {
-            ff(args[1], args[2]);
-        } else if (args[0] == "pwd") {
-            write(STDOUT_FILENO, wd, strlen(wd));
-			write(STDOUT_FILENO, "\n", 1);
-        } else {
-			write(STDOUT_FILENO, "Failed to execute ", 18);
-			write(STDOUT_FILENO, args[0].c_str(), args[0].length());
-			write(STDOUT_FILENO, "\n", 1);
-		} //default situation
-	} //keep working until exit
-	return 0;
+    return 0; //return 0;
 }
