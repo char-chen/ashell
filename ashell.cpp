@@ -103,6 +103,7 @@ void execBuildIn(char* str, char **args) {
 
 int main() {
     history *h = new history(); //init history struct
+    
     while(true) {
         int status;
         char *wd = getcwd(NULL, 0); //working directory
@@ -128,6 +129,7 @@ int main() {
                     write(STDOUT_FILENO, "Failed to execute ", 18);
                     write(STDOUT_FILENO, args[0], strlen(args[0]));
                     write(STDOUT_FILENO, "\n", 1);
+                    exit(1);
                 }
             }
         }
