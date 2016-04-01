@@ -125,7 +125,7 @@ string mygetline(history *h)
 	}
     
 	ResetCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
-    add(h, line);
+	add(h, line);
 	return line.c_str();	
 }
 
