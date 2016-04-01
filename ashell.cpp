@@ -1,11 +1,8 @@
 #include "line.h"
 #include "ashell.h"
-
 #include <iostream>
 
-
-void cd(char *dir)
-{
+void cd(char *dir) {
     if (dir == NULL) {
         if (chdir(getenv("HOME")) == -1) {
             write(STDOUT_FILENO, "Error changing directory.\n", 26);
@@ -18,21 +15,18 @@ void cd(char *dir)
 }
 
 void ls(char* dir) {
-    char **args = new char*[2];
-    args[0] = "ls";
-    args[1] = "-al";
-    execvp(args[0], args);
-    /*struct dirent *myfile;
-    struct stat fileStat;
     DIR *mydir;
-    if (dir != NULL)
+    struct dirent *entry;
+    struct stat fileStat;
+    
+    if (dir)
         mydir = opendir(dir);
     else
         mydir = opendir(".");
     
     if (mydir) {
         string buf;
-        while ((myfile = readdir(mydir))) {
+        while ((entry = readdir(mydir))) {
             stat(buf.c_str(), &fileStat);
             write(STDOUT_FILENO, (S_ISDIR(fileStat.st_mode)) ? "d" : "-", 1);
             write(STDOUT_FILENO, (fileStat.st_mode & S_IRUSR) ? "r" : "-", 1);
@@ -45,7 +39,7 @@ void ls(char* dir) {
             write(STDOUT_FILENO, (fileStat.st_mode & S_IWOTH) ? "w" : "-", 1);
             write(STDOUT_FILENO, (fileStat.st_mode & S_IXOTH) ? "x" : "-", 1);
             write(STDOUT_FILENO, " ", 1);
-            write(STDOUT_FILENO, myfile->d_name, strlen(myfile->d_name));
+            write(STDOUT_FILENO, entry->d_name, strlen(entry->d_name));
             write(STDOUT_FILENO, "\n", 1);
         }
         closedir(mydir);
@@ -53,16 +47,41 @@ void ls(char* dir) {
         string temp(dir);
         write(STDOUT_FILENO, ("Failed to open directory \"" + temp).c_str(), 25 + temp.length());
         write(STDOUT_FILENO, "\"\n", 2);
-    }*/
+    }
 }
 
-void ff(char* filename, char* directory)
-{
-    
+void ff(char* filename, char* directory) {
+    if (filename) {
+        DIR *dir;
+        struct dirent *entry;
+        struct stat fileStat;
+        if (directory)
+            dir = opendir(directory);
+        else
+            dir = opendir(".");
+        
+        if (dir) {
+            string buf;
+            while ((entry = readdir(dir))) {
+                stat(buf.c_str(), &fileStat);
+                if (strcmp(filename, entry->d_name) == 0) {
+                    write(STDOUT_FILENO, entry->d_name, strlen(entry->d_name));
+                    write(STDOUT_FILENO, "\n", 1);
+                }
+                if (S_ISDIR(fileStat.st_mode)) {
+                    ff(filename, entry->d_name);
+                }
+            }
+            closedir (dir);
+        } else {
+            perror ("");
+        }
+    } else {
+        write(STDOUT_FILENO, "ff command requires a filename!\n", 35);
+    }
 }
 
-void execBuildIn(char* str, char **args)
-{
+void execBuildIn(char* str, char **args) {
     string command(str);
     
     if (command == "exit") {
@@ -80,20 +99,12 @@ void execBuildIn(char* str, char **args)
     }
 }
 
-
-
-
-
-int main()
-{
-    
+int main() {
     history *h = new history(); //init history struct
-    
     while(true) {
         int status;
         char *wd = getcwd(NULL, 0); //working directory
         printPrompt(wd); //output the promt
-        
         string input = mygetline(h); //read and store commands
         
         if (input == "")
@@ -116,12 +127,10 @@ int main()
                     write(STDOUT_FILENO, args[0], strlen(args[0]));
                     write(STDOUT_FILENO, "\n", 1);
                 }
-                
             }
         }
-        
         delete[](args);
     }
     
-    return 0; //return 0;
+    return 0;
 }

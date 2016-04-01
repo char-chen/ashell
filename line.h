@@ -7,16 +7,16 @@
 
 using namespace std;
 
-void ResetCanonicalMode(int fd, struct termios *savedattributes){
+void ResetCanonicalMode(int fd, struct termios *savedattributes) {
     tcsetattr(fd, TCSANOW, savedattributes);
 }
 
-void SetNonCanonicalMode(int fd, struct termios *savedattributes){
+void SetNonCanonicalMode(int fd, struct termios *savedattributes) {
     struct termios TermAttributes;
     
     // Make sure stdin is a terminal.
-    if(!isatty(fd)){
-        fprintf (stderr, "Not a terminal.\n");
+    if (!isatty(fd)) {
+        fprintf(stderr, "Not a terminal.\n");
         exit(0);
     }
     
@@ -32,13 +32,11 @@ void SetNonCanonicalMode(int fd, struct termios *savedattributes){
 }
 
 //mygetline
-struct history
-{
+struct history {
     int count;
     string commands[10];
     
-    history()
-    {
+    history() {
         this->count = 0;
         
         for (int i=0; i<10; i++) {
@@ -47,8 +45,7 @@ struct history
     }
 };
 
-void add(history *h, string command)
-{
+void add(history *h, string command) {
     for (int i = 9; i > 0; i--) {
         h->commands[i] = h->commands[i-1];
     }
@@ -65,60 +62,50 @@ string mygetline(history *h)
 
     int count = -1;
     
-	while(read(STDIN_FILENO, &RXChar, 1) != -1) {
+	while (read(STDIN_FILENO, &RXChar, 1) != -1) {
 		
-        if(RXChar == 0x0A || RXChar == 0x04){
+        if (RXChar == 0x0A || RXChar == 0x04) {
             write(STDOUT_FILENO, "\n", 1);
             break;
         }
-        else if (RXChar == 27){
+        else if (RXChar == 27) {
 			read(STDIN_FILENO, &RXChar, 1);
             read(STDIN_FILENO, &RXChar, 1);
             
-			switch (RXChar)
-			{
+			switch (RXChar) {
 				case 'A': //UP
                     count++;
                     if (h->commands[count].length() == 0) {
                         write(STDOUT_FILENO, "\a", 1);
                         break;
-                    }
-                    else
-                    {
+                    } else {
                         while (line.length()>0) {
                             write(STDOUT_FILENO, "\b \b", 3);
                             line = line.substr(0,line.length()-1);
                         }
-                        
                         line = h->commands[count];
-                        
                         write(STDOUT_FILENO, line.c_str(), line.length());
-                        
                     }
 					break;
 				case 'B': //DOWN
-                    if (count == -1)
-                    {
+                    if (count == -1) {
                         write(STDOUT_FILENO, "\a", 1);
                         break;
                     }
-                    if (count == 0)
-                    {
+                    if (count == 0) {
                         while (line.length()>0) {
                             write(STDOUT_FILENO, "\b \b", 3);
                             line = line.substr(0,line.length()-1);
                         }
                         count--;
                         break;
-                    }
-                    else
+                    } else {
                         count--;
-                        
-                    while (line.length()>0) {
-                        write(STDOUT_FILENO, "\b \b", 3);
-                        line = line.substr(0,line.length()-1);
                     }
-                        
+                    while (line.length() > 0) {
+                        write(STDOUT_FILENO, "\b \b", 3);
+                        line = line.substr(0, line.length() - 1);
+                    }
                     line = h->commands[count];
                     write(STDOUT_FILENO, line.c_str(), line.length());
 					break;
@@ -129,32 +116,25 @@ string mygetline(history *h)
 				default:
 					break;
 			}
-        }
-        else if (RXChar == 0x7F || RXChar == 0x08) {
-            
-            if (line.length()==0)
+        } else if (RXChar == 0x7F || RXChar == 0x08) {
+            if (line.length() == 0) {
                 write(STDOUT_FILENO, "\a", 1);
-            else{
-                line = line.substr(0,line.length()-1);
+            } else {
+                line = line.substr(0, line.length() - 1);
                 write(STDOUT_FILENO, "\b \b", 3);
             }
-        }
-		else if(isprint(RXChar)) {
+        } else if(isprint(RXChar)) {
 			line += RXChar;
 			write(STDOUT_FILENO, &RXChar, 1);
 		}
 	}
     
 	ResetCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
-    
     add(h, line);
-    
 	return line.c_str();	
 }
 
-char** getCommand(string str)
-{
-    
+char** getCommand(string str) {
     if (str.length() == 0)
         return NULL;
     
@@ -192,9 +172,8 @@ char** getCommand(string str)
             break;
     }
     
-    for (int i=0; i < total; i ++)
+    for (int i = 0; i < total; i++)
         args[i] = &(result[i][0]);
     
     return args;
 }
-
