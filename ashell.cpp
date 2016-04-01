@@ -19,15 +19,16 @@ void ls(char* dir) {
     struct dirent *entry;
     struct stat fileStat;
     
-    if (dir)
+    if (dir) {
         mydir = opendir(dir);
-    else
+        stat(dir, &fileStat);
+    } else {
         mydir = opendir(".");
+        stat(".", &fileStat);
+    }
     
     if (mydir) {
-        string buf;
         while ((entry = readdir(mydir))) {
-            stat(buf.c_str(), &fileStat);
             write(STDOUT_FILENO, (S_ISDIR(fileStat.st_mode)) ? "d" : "-", 1);
             write(STDOUT_FILENO, (fileStat.st_mode & S_IRUSR) ? "r" : "-", 1);
             write(STDOUT_FILENO, (fileStat.st_mode & S_IWUSR) ? "w" : "-", 1);
@@ -55,15 +56,16 @@ void ff(char* filename, char* directory) {
         DIR *dir;
         struct dirent *entry;
         struct stat fileStat;
-        if (directory)
+        if (directory) {
             dir = opendir(directory);
-        else
+            stat(directory, &fileStat);
+        } else {
             dir = opendir(".");
+            stat(".", &fileStat);
+        }
         
         if (dir) {
-            string buf;
             while ((entry = readdir(dir))) {
-                stat(buf.c_str(), &fileStat);
                 if (strcmp(filename, entry->d_name) == 0) {
                     write(STDOUT_FILENO, entry->d_name, strlen(entry->d_name));
                     write(STDOUT_FILENO, "\n", 1);
