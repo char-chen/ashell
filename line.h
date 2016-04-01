@@ -38,32 +38,27 @@ struct history {
     
     history() {
         this->count = 0;
-        
-        for (int i=0; i<10; i++) {
+        for (int i=0; i<10; i++)
             this->commands[i] = "";
-        }
     }
 };
 
 void add(history *h, string command) {
-    for (int i = 9; i > 0; i--) {
+    for (int i = 9; i > 0; i--)
         h->commands[i] = h->commands[i-1];
-    }
     h->commands[0] = command;
 }
 
 string mygetline(history *h)
 {
+	char RXChar;
+    int count = -1;
 	string line = "";
 	struct termios SavedTermAttributes;
-	char RXChar;
 
 	SetNonCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
-
-    int count = -1;
     
 	while (read(STDIN_FILENO, &RXChar, 1) != -1) {
-		
         if (RXChar == 0x0A || RXChar == 0x04) {
             write(STDOUT_FILENO, "\n", 1);
             break;
@@ -148,7 +143,6 @@ char** getCommand(string str) {
     char** args = new char *[total+1];
     
     for (int n=0; n < total; n++) {
-        
         int first = 0;
         int end = str.length();
         
