@@ -71,7 +71,9 @@ void ff(char* filename, char* directory) {
                     write(STDOUT_FILENO, "\n", 1);
                 }
                 if (S_ISDIR(fileStat.st_mode)) {
-                    ff(filename, entry->d_name);
+                    if (strcmp(entry->d_name, "..") != 0 && strcmp(entry->d_name, ".") != 0) {
+                        ff(filename, entry->d_name);
+                    }
                 }
             }
             closedir (dir);
