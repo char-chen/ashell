@@ -135,25 +135,25 @@ char** getCommand(string str) {
     
     int total = 1;
     
-    for (int i=0; i < str.length(); i++)
+    for (unsigned int i = 0; i < str.length(); i++)
         if (str[i] == 0x20)
             total++;
     
     string *result = new string[total];
     char** args = new char *[total+1];
     
-    for (int n=0; n < total; n++) {
+    for (int n = 0; n < total; n++) {
         int first = 0;
         int end = str.length();
         
-        for (int i=0; i < str.length(); i++) {
+        for (unsigned int i = 0; i < str.length(); i++) {
             if (str[i] != 0x20) {
                 first = i;
                 break;
             }
         } //get the first start
         
-        for (int i=first+1; i < str.length(); i++) {
+        for (unsigned int i = first + 1; i < str.length(); i++) {
             if (str[i] == 0x20) {
                 end = i;
                 break;

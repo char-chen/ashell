@@ -71,7 +71,8 @@ void ff(char* filename, char* directory) {
                     write(STDOUT_FILENO, "\n", 1);
                 }
                 if (S_ISDIR(fileStat.st_mode)) {
-                    ff(filename, entry->d_name);
+                    cout << entry->d_name << endl;
+                    //ff(filename, entry->d_name);
                 }
             }
             closedir (dir);
