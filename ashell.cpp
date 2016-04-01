@@ -19,16 +19,18 @@ void ls(char* dir) {
     struct dirent *entry;
     struct stat fileStat;
     
-    if (dir) {
+    if (dir)
         mydir = opendir(dir);
-        stat(dir, &fileStat);
-    } else {
+    else
         mydir = opendir(".");
-        stat(".", &fileStat);
-    }
     
     if (mydir) {
         while ((entry = readdir(mydir))) {
+            if (dir) {
+                stat((string(dir) +  "/" + string(entry->d_name)).c_str(), &fileStat);
+            } else {
+                stat(entry->d_name, &fileStat);
+            }
             write(STDOUT_FILENO, (S_ISDIR(fileStat.st_mode)) ? "d" : "-", 1);
             write(STDOUT_FILENO, (fileStat.st_mode & S_IRUSR) ? "r" : "-", 1);
             write(STDOUT_FILENO, (fileStat.st_mode & S_IWUSR) ? "w" : "-", 1);
