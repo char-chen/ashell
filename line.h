@@ -16,7 +16,7 @@ void SetNonCanonicalMode(int fd, struct termios *savedattributes) {
     
     // Make sure stdin is a terminal.
     if (!isatty(fd)) {
-        fprintf(stderr, "Not a terminal.\n");
+        //fprintf(stderr, "Not a terminal.\n");
         exit(0);
     }
     
@@ -44,6 +44,8 @@ struct history {
 };
 
 void add(history *h, string command) {
+    if (h->count < 10)
+        h->count++;
     for (int i = 9; i > 0; i--)
         h->commands[i] = h->commands[i-1];
     h->commands[0] = command;
@@ -69,7 +71,8 @@ string mygetline(history *h)
             
 			switch (RXChar) {
 				case 'A': //UP
-                    count++;
+                    if (count < h->count)
+                        count++;
                     if (h->commands[count].length() == 0) {
                         write(STDOUT_FILENO, "\a", 1);
                         break;
@@ -85,24 +88,24 @@ string mygetline(history *h)
 				case 'B': //DOWN
                     if (count == -1) {
                         write(STDOUT_FILENO, "\a", 1);
-                        break;
                     }
-                    if (count == 0) {
+                    else if (count == 0) {
                         while (line.length()>0) {
                             write(STDOUT_FILENO, "\b \b", 3);
                             line = line.substr(0,line.length()-1);
                         }
                         count--;
-                        break;
                     } else {
+                        if (count == h->count)
+                            count--;
                         count--;
+                        while (line.length() > 0) {
+                            write(STDOUT_FILENO, "\b \b", 3);
+                            line = line.substr(0, line.length() - 1);
+                        }
+                        line = h->commands[count];
+                        write(STDOUT_FILENO, line.c_str(), line.length());
                     }
-                    while (line.length() > 0) {
-                        write(STDOUT_FILENO, "\b \b", 3);
-                        line = line.substr(0, line.length() - 1);
-                    }
-                    line = h->commands[count];
-                    write(STDOUT_FILENO, line.c_str(), line.length());
 					break;
 				case 'C': //RIGHT
 					break;
