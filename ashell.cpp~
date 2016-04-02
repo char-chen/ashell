@@ -21,13 +21,15 @@ void ls(const char* dir) {
     DIR *mydir = dir ? opendir(dir):opendir(".");
     struct dirent *entry;
     struct stat fileStat;
+    
+   
 
     if (mydir) {
         while ((entry = readdir(mydir))) {
             if (dir) {
-                stat((string(dir) +  "/" + string(entry->d_name)).c_str(), &fileStat);
+                //stat((string(dir) +  "/" + string(entry->d_name)).c_str(), &fileStat);
             } else {
-                stat(entry->d_name, &fileStat);
+                //stat(entry->d_name, &fileStat);
             }
             write(STDOUT_FILENO, (S_ISDIR(fileStat.st_mode)) ? "d" : "-", 1);
             write(STDOUT_FILENO, (fileStat.st_mode & S_IRUSR) ? "r" : "-", 1);
