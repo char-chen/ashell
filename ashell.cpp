@@ -17,7 +17,6 @@ void cd(char *dir) {
 }
 
 void ls(const char* dir) {
-	int n;
     struct stat fileStat;
     struct dirent *entry;
     DIR *mydir = dir ? opendir(dir) : opendir(".");
@@ -135,7 +134,7 @@ void execute(char **args) {
 int pipeNum(string input) {
 	int count = 0;
 
-	for (int i=0; i < input.length(); i++)
+	for (unsigned int i = 0; i < input.length(); i++)
 		if (input[i] == '|')
 			count++;
 
