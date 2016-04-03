@@ -53,13 +53,9 @@ void ls(const char* dir) {
 
 void ff(char* filename, char* directory)  {
     if (filename) {
-        DIR *dir;
-        struct dirent *entry;
         struct stat fileStat;
-        if (directory)
-            dir = opendir(directory);
-        else
-            dir = opendir(".");
+        struct dirent *entry;
+        DIR *dir = directory ? opendir(directory) : opendir(".");
         
         if (dir) {
             while ((entry = readdir(dir))) {
