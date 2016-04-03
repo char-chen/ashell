@@ -68,7 +68,6 @@ string mygetline(history *h)
         }
         else if (RXChar == 0x04)
         {
-        	write(STDOUT_FILENO, "\n", 1);
         	ResetCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
         	exit(0);
         }
