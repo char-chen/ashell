@@ -58,20 +58,26 @@ void ff(char* filename, char* directory) {
         DIR *dir;
         struct dirent *entry;
         struct stat fileStat;
-        if (directory) {
+        if (directory)
             dir = opendir(directory);
-            stat(directory, &fileStat);
-        } else {
+        else
             dir = opendir(".");
-            stat(".", &fileStat);
-        }
         
         if (dir) {
             while ((entry = readdir(dir))) {
+                if (directory) {
+                    stat((string(directory) +  "/" + string(entry->d_name)).c_str(), &fileStat);
+                } else {
+                    stat(entry->d_name, &fileStat);
+                }
+                cout << entry->d_name << endl; 
+                //Checks if file found 
                 if (strcmp(filename, entry->d_name) == 0) {
                     write(STDOUT_FILENO, entry->d_name, strlen(entry->d_name));
                     write(STDOUT_FILENO, "\n", 1);
                 }
+
+                //If the entry is a directory, go inside it
                 if (S_ISDIR(fileStat.st_mode)) {
                     if (strcmp(entry->d_name, "..") != 0 && strcmp(entry->d_name, ".") != 0) {
                         ff(filename, entry->d_name);
