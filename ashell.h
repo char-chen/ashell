@@ -9,15 +9,16 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <iostream>
 
 using namespace std;
 
 void printPrompt(const char* wd) {
-    string result = "";
+    char *result = new char[strlen(wd)+2];
     
     if (strlen(wd) > 16) {
-        result.assign("/.../", 5);
-        char temp[strlen(wd)];
+        strcpy(result, "/.../");
+        char *temp = new char[strlen(wd)];
         int count1 = strlen(wd) - 1;
         int count2 = 0;
         char c = wd[count1];
@@ -26,20 +27,24 @@ void printPrompt(const char* wd) {
             temp[count2++] = c;
             c = wd[--count1];
         } //check last /
+        temp[count2] = 0;
         
-        for (int i = 0; i < count2 / 2; i++) {
+        int len = strlen(temp);
+        for (int i = 0; i < len / 2; i++) {
             c = temp[i];
-            temp[i] = temp[count2 - 1 - i];
-            temp[count2 - 1 - i] = c;
+            temp[i] = temp[len - 1 - i];
+            temp[len - 1 - i] = c;
         } //reverse the string
         
-        result += temp;
+        strcat(result, temp);
+        delete[](temp);
     }
     else //if length < 16
-        result.assign(wd);
+        strcpy(result, wd);
     
-    result += "% ";
-    write(STDOUT_FILENO, result.c_str(), result.length()); //output the prompt
+    strcat(result, "% ");
+    write(STDOUT_FILENO, result, strlen(result)); //output the prompt  
+    delete[](result);
 } //output the prompt
 
 

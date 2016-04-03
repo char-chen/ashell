@@ -136,13 +136,10 @@ string mygetline(history *h)
     
 	ResetCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
 	add(h, line);
-	return line.c_str();	
+	return line;	
 }
 
-char** getCommand(string str) {
-
-    if (str.length() == 0)
-        return NULL;
+char** getCommand(string str, int *length) {
     
     int total = 1;
     
@@ -177,10 +174,20 @@ char** getCommand(string str) {
             break;
     }
         
-    for (int i = 0; i < total; i++)
-        args[i] = &(result[i][0]);
-        
+    for (int i = 0; i < total; i++) {
+        args[i] = new char[result[i].length()];
+        strcpy(args[i], result[i].c_str());
+        //&(result[i][0]);
+    }
+    
+    delete[] result;
+    
+    for (int i=0; i < total; i++) {
+    	if (strlen(args[i]) == 0 || strcmp(args[i]," ") == 0)
+    		args[i] = NULL;
+    }	   
     args[total] = NULL; //fixed the bug
     
+    *length = total + 1;
     return args;
 }
