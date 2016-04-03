@@ -51,7 +51,7 @@ void ls(const char* dir) {
 
 }
 
-void ff(char* filename, char* directory)  {
+void ff(char* filename, const char* directory)  {
     if (filename) {
         struct stat fileStat;
         struct dirent *entry;
@@ -59,14 +59,12 @@ void ff(char* filename, char* directory)  {
         
         if (dir) {
             while ((entry = readdir(dir))) {
-                if (directory) {
-                    stat((string(directory) +  "/" + string(entry->d_name)).c_str(), &fileStat);
-                } else {
-                    stat(entry->d_name, &fileStat);
-                }
-                cout << entry->d_name << endl; 
-                //Checks if file found 
+                string path = directory ? string(directory) + "/" : "./";
+                stat((path + entry->d_name).c_str(), &fileStat);
+                 
+                //Checks if file matches
                 if (strcmp(filename, entry->d_name) == 0) {
+                    write(STDOUT_FILENO, path.c_str(), path.length());
                     write(STDOUT_FILENO, entry->d_name, strlen(entry->d_name));
                     write(STDOUT_FILENO, "\n", 1);
                 }
@@ -74,7 +72,7 @@ void ff(char* filename, char* directory)  {
                 //If the entry is a directory, go inside it
                 if (S_ISDIR(fileStat.st_mode)) {
                     if (strcmp(entry->d_name, "..") != 0 && strcmp(entry->d_name, ".") != 0) {
-                        ff(filename, entry->d_name);
+                        ff(filename, (path + string(entry->d_name)).c_str());
                     }
                 }
             }
@@ -230,8 +228,7 @@ void multipipe(const string input) {
 	for (int i = 0; i < count; i++) {
 		pipe(p[i]);
 		
-		if (!(pid[i] = fork()))
-		{
+		if (!(pid[i] = fork())) {
 			if (i==count-1) { //the last son
 				int j = 0;
 				for (j = 0; j < i-1; j++) { //close all unnessary pipes
