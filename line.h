@@ -52,8 +52,7 @@ void add(history *h, string command) {
     h->commands[0] = command;
 }
 
-string mygetline(history *h)
-{
+string mygetline(history *h) {
 	char RXChar;
     int count = -1;
 	string line = "";
@@ -140,7 +139,6 @@ string mygetline(history *h)
 }
 
 char** getCommand(string str, int *length) {
-    
     int total = 1;
     
     for (unsigned int i = 0; i < str.length(); i++)
@@ -182,12 +180,11 @@ char** getCommand(string str, int *length) {
     
     delete[] result;
     
-    for (int i=0; i < total; i++) {
+    for (int i=0; i < total; i++)
     	if (strlen(args[i]) == 0 || strcmp(args[i]," ") == 0)
     		args[i] = NULL;
-    }	   
-    args[total] = NULL; //fixed the bug
     
+    args[total] = NULL; //fixed the bug
     *length = total + 1;
     return args;
 }

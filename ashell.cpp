@@ -18,9 +18,9 @@ void cd(char *dir) {
 
 void ls(const char* dir) {
 	int n;
-    DIR *mydir = dir ? opendir(dir):opendir(".");
-    struct dirent *entry;
     struct stat fileStat;
+    struct dirent *entry;
+    DIR *mydir = dir ? opendir(dir) : opendir(".");
 
     if (mydir) {
         while ((entry = readdir(mydir))) {
@@ -52,8 +52,7 @@ void ls(const char* dir) {
 
 }
 
-void ff(char* filename, char* directory) 
-{
+void ff(char* filename, char* directory)  {
     if (filename) {
         DIR *dir;
         struct dirent *entry;
@@ -111,10 +110,9 @@ void execBuildIn(char* str, char **args) {
     }
 }
 
-void execute(char **args)
-{
+void execute(char **args) {
 	int status;
-	if (isBuildIn(args[0])) {
+	if (isBuiltIn(args[0])) {
 		execBuildIn(args[0], args);
     } else {
 		status = fork();            
@@ -134,14 +132,13 @@ void execute(char **args)
 	} 
 }
 
-int pipeNum(string input)
-{
+int pipeNum(string input) {
 	int count = 0;
-	
-	for (int i=0; i < input.length(); i++) {
+
+	for (int i=0; i < input.length(); i++)
 		if (input[i] == '|')
 			count++;
-	}	
+
 	return count;
 }
 
@@ -170,7 +167,7 @@ int pipeNum(string input)
 		close(0);
 		dup2(p[0], 0);
 		close(p[0]);
-		if (isBuildIn(cmd2[0])) {
+		if (isBuiltIn(cmd2[0])) {
 			execBuildIn(cmd2[0], cmd2);
 			exit(0);
 		} else {
@@ -192,7 +189,7 @@ int pipeNum(string input)
 		close(p[1]);
 		if(!cmd1 || !cmd1[0])
 			exit(0);
-		if (isBuildIn(cmd1[0])) {
+		if (isBuiltIn(cmd1[0])) {
 			execBuildIn(cmd1[0], cmd1);
 			exit(0);
 		} else {
@@ -221,7 +218,6 @@ int pipeNum(string input)
 
 
 void multipipe(const string input) {
-	
 	int count = pipeNum(input)+1; //total count
 	int p[count][2];
 	pid_t pid[count]; //my children
@@ -237,7 +233,6 @@ void multipipe(const string input) {
 
 	
 	for (int i = 0; i < count; i++) {
-	
 		pipe(p[i]);
 		
 		if (!(pid[i] = fork()))
@@ -271,7 +266,7 @@ void multipipe(const string input) {
 			
 			if(!cmd[i] || !cmd[i][0])
 				exit(0);
-			if (isBuildIn(cmd[i][0])) {
+			if (isBuiltIn(cmd[i][0])) {
 				execBuildIn(cmd[i][0], cmd[i]);
 				exit(0);
 			} else {
@@ -309,7 +304,6 @@ void multipipe(const string input) {
 //ALSO, the book OPERATING SYSTEMS, Design and Implementation, third edition.
 
 int main() {
-
     history *h = new history(); //init history struct         
 
     while(true) {

@@ -48,7 +48,7 @@ void printPrompt(const char* wd) {
 } //output the prompt
 
 
-bool isBuildIn(char* str) {
+bool isBuiltIn(char* str) {
     string command(str);
     return command == "cd" || command == "ff" || command == "ls" || command == "pwd" || command == "exit";
 }
