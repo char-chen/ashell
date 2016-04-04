@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -13,6 +14,7 @@
 
 using namespace std;
 
+char** redirection(string input, int *length);
 void printPrompt(const char* wd) {
     char *result = new char[strlen(wd)+2];
     
@@ -51,5 +53,13 @@ void printPrompt(const char* wd) {
 bool isBuiltIn(char* str) {
     string command(str);
     return command == "cd" || command == "ff" || command == "ls" || command == "pwd" || command == "exit";
+}
+
+void trim(string &str)
+{
+	int s=str.find_first_not_of(" \t");
+	int e=str.find_last_not_of(" \t");
+	if(s!=-1 && e!=-1)
+		str=str.substr(s,e-s+1);
 }
 
