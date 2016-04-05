@@ -57,21 +57,18 @@ string mygetline(history *h) {
     int count = -1;
 	string line = "";
 	struct termios SavedTermAttributes;
-
+	
 	SetNonCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
     
 	while (read(STDIN_FILENO, &RXChar, 1) != -1) {
         if (RXChar == 0x0A) {
             write(STDOUT_FILENO, "\n", 1);
             break;
-        }
-        else if (RXChar == 0x04)
-        {
+        } else if (RXChar == 0x04) {
         	write(STDOUT_FILENO, "\n", 1);
         	ResetCanonicalMode(STDIN_FILENO, &SavedTermAttributes);
         	exit(0);
-        }
-        else if (RXChar == 27) {
+        } else if (RXChar == 27) {
 			read(STDIN_FILENO, &RXChar, 1);
             read(STDIN_FILENO, &RXChar, 1);
             
@@ -94,8 +91,7 @@ string mygetline(history *h) {
 				case 'B': //DOWN
                     if (count == -1) {
                         write(STDOUT_FILENO, "\a", 1);
-                    }
-                    else if (count == 0) {
+                    } else if (count == 0) {
                         while (line.length()>0) {
                             write(STDOUT_FILENO, "\b \b", 3);
                             line = line.substr(0,line.length()-1);
