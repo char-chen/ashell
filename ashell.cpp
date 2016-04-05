@@ -17,7 +17,6 @@ void cd(char *dir) {
 }
 
 void ls(const char* dir) {
-	int n;
     DIR *mydir = dir ? opendir(dir):opendir(".");
     struct dirent *entry;
     struct stat fileStat;
@@ -311,8 +310,7 @@ void multipipe(const string input) {
 //http://stackoverflow.com/questions/12981199/multiple-pipe-implementation-using-system-call-fork-execvp-wait-pipe-i
 //ALSO, the book OPERATING SYSTEMS, Design and Implementation, third edition.
  
-char** redirection(string input, int *length)
-{
+char** redirection(string input, int *length) {
 	char **args;
 	string inf, outf;
 	int s,e;
