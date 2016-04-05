@@ -86,7 +86,7 @@ void ff(char* filename, const char* directory)  {
 }
 
 void execBuildIn(char* str, char **args) {
-    string command(str);
+	string command(str);
     
     if (command == "exit") {
         exit(0);
@@ -104,8 +104,7 @@ void execBuildIn(char* str, char **args) {
 }
 
 
-void execute(char **args)
-{
+void execute(char **args) {
 	//check any redirection		
 	int status;
 	if (isBuiltIn(args[0])) {
@@ -116,7 +115,7 @@ void execute(char **args)
        	//Parent code
 			waitpid(status,NULL, 0);
         } else {
-                //Child code
+        	//Child code
         	if (execvp(args[0], args) == -1) {
         		//perror("Execvp Fails: ") ;
             	write(STDOUT_FILENO, "Failed to execute ", 18);
@@ -128,10 +127,8 @@ void execute(char **args)
 	} 
 }
 
-int pipeNum(string input)
-{
+int pipeNum(string input) {
 	int count = 0;
-	
 	for (int i=0; i < input.length(); i++) {
 		if (input[i] == '|')
 			count++;
@@ -214,7 +211,6 @@ int pipeNum(string input)
 }*///THIS PART inspired me to write the following code
 
 void multipipe(const string input) {
-	
 	int count = pipeNum(input)+1; //total count
 	int p[count][2];
 	pid_t pid[count]; //my children
@@ -225,23 +221,21 @@ void multipipe(const string input) {
 	int length[count];
 	memset(length, 0, sizeof(int)*count);
 	
-	for (int i = 0; i < count; i++) {//get all pipe commands!
+	for (int i = 0; i < count; i++) {
+		//get all pipe commands!
 		temp[i].assign(strsep(&str, "|"));
 		cmd[i] = getCommand(temp[i].c_str(), &length[i]);
 	}
 	
 	for (int i = 0; i < count; i++) {
-
 		pipe(p[i]);
 		
-		if (!(pid[i] = fork()))
-		{	
+		if (!(pid[i] = fork())) {	
 			if (temp[i].find("<")!= -1 || temp[i].find(">") != -1) {
 				for (int j = 0; j < length[i]; j++)
 						delete[] cmd[i][j];//free memory space
 						
 				cmd[i] = redirection(temp[i],&length[i]); //redirection dup2 and get new memory here
-				
 			}
 			if (i==count-1) { //the last son
 				int j = 0;
@@ -271,7 +265,7 @@ void multipipe(const string input) {
 			if(!cmd[i] || !cmd[i][0])
 				exit(0);
 
-		//belongs to command 
+			//belongs to command 
 			if (isBuiltIn(cmd[i][0])) {
 				execBuildIn(cmd[i][0], cmd[i]);
 				exit(0);
@@ -283,7 +277,6 @@ void multipipe(const string input) {
             	exit(1);
 			}
 		}	
-		
 	}
 	for (int i=0; i < count; i++) {
 		close(p[i][0]);
@@ -296,8 +289,9 @@ void multipipe(const string input) {
 	
 	//delete memory 
 	for (int i = 0; i < count; i++) {
-		for (int j = 0; j < length[i]; j++)
+		for (int j = 0; j < length[i]; j++) {
 			delete[] cmd[i][j];
+		}
 		delete[] cmd[i];
 	}
 	delete[] cmd;
@@ -323,28 +317,31 @@ char** redirection(string input, int *length) {
 	if (in == -1) {
 		cmd = input.substr(0, out);
 	} else {
- 		if (out == -1)
+ 		if (out == -1) {
  			cmd = input.substr(0, in);
- 		else
+ 		} else {
  			cmd = in < out ? input.substr(0, in) : input.substr(0, out);
- 	}
+ 		}
+	}
 	trim(cmd);
 	
 	in = input.find_last_of("<");
 	if (in != -1) {
 		s = input.length();
 		e = input.length();
-		for (int i = in+1; i < input.length(); i++)
+		for (int i = in+1; i < input.length(); i++) {
 			if (input[i] != 32 || input[i] == 0) {
 				s = i;
 				break;
 			}
-		for (int i = s; i < input.length(); i++)
+		}
+		for (int i = s; i < input.length(); i++) {
 			if (input[i] == 0 || input[i] == 32 || input[i] == '>') {
 				e = i;
 				break;
 			}
-			
+		}
+		
 		inf = input.substr(in+1, e-in-1);
 		trim(inf);
 		
@@ -365,17 +362,19 @@ char** redirection(string input, int *length) {
  	if (out != -1) {
  		s = input.length();
 		e = input.length();
-		for (int i = out+1; i < input.length(); i++)
+		for (int i = out+1; i < input.length(); i++) {
 			if (input[i] != 32 || input[i] == 0) {
 				s = i;
 				break;
 			}
-		for (int i = s; i < input.length(); i++)
+		}
+		for (int i = s; i < input.length(); i++) {
 			if (input[i] == 0 || input[i] == 32 || input[i] == '<') {
 				e = i;
 				break;
 			}
-			
+		}
+		
 		outf = input.substr(out+1, e-in-1);
 		trim(outf);
  		
@@ -390,7 +389,6 @@ char** redirection(string input, int *length) {
 }
 
 int main() {
-
     history *h = new history(); //init history struct         
 
     while(true) {
@@ -437,6 +435,6 @@ int main() {
         //delete[](args2);
         delete(wd);
     }
-    
+	 
     return 0;
 }
