@@ -17,7 +17,7 @@ void cd(char *dir) {
 }
 
 void ls(const char* dir) {
-    DIR *mydir = dir ? opendir(dir):opendir(".");
+    DIR *mydir = dir ? opendir(dir) : opendir(".");
     struct dirent *entry;
     struct stat fileStat;
 
@@ -102,7 +102,6 @@ void execBuildIn(char* str, char **args) {
         write(STDOUT_FILENO, "\n", 1);
     }
 }
-
 
 void execute(char **args) {
 	//check any redirection		
@@ -298,11 +297,6 @@ void multipipe(const string input) {
 				
 	delete[](str);
 } //recusion way is too hard to handle
-//citations for pipe and redirection part
-//http://web.cse.ohio-state.edu/~mamrak/CIS762/pipes_lab_notes.html
-//http://www.cs.loyola.edu/~jglenn/702/S2005/Examples/dup2.html
-//http://stackoverflow.com/questions/12981199/multiple-pipe-implementation-using-system-call-fork-execvp-wait-pipe-i
-//ALSO, the book OPERATING SYSTEMS, Design and Implementation, third edition.
  
 char** redirection(string input, int *length) {
 	char **args;
