@@ -56,7 +56,7 @@ void ff(char* filename, const char* directory)  {
         struct stat fileStat;
         struct dirent *entry;
         DIR *dir = directory ? opendir(directory) : opendir(".");
-        
+       //close(2); 
         if (dir) {
             while ((entry = readdir(dir))) {
                 string path = directory ? string(directory) + "/" : "./";
@@ -78,7 +78,8 @@ void ff(char* filename, const char* directory)  {
             }
             closedir (dir);
         } else {
-            perror ("");
+			write(STDOUT_FILENO, ("Failed to open directory \"" + string(directory) + "/\"").c_str(), 28 + strlen(directory));
+            write(STDOUT_FILENO, "\n", 1);
         }
     } else {
         write(STDOUT_FILENO, "ff command requires a filename!\n", 35);
